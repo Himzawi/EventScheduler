@@ -1,0 +1,1926 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Event Scheduler Pro - Intelligent Planning Assistant</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
+
+      :root {
+        --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        --warning-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        --danger-gradient: linear-gradient(135deg, #f77062 0%, #fe5196 100%);
+        --ai-gradient: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);
+        --dark-bg: #0f0f1e;
+        --card-bg: rgba(255, 255, 255, 0.05);
+        --glass-bg: rgba(255, 255, 255, 0.1);
+        --text-primary: #ffffff;
+        --text-secondary: #b8b8d1;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Poppins", sans-serif;
+        background: var(--dark-bg);
+        color: var(--text-primary);
+        min-height: 100vh;
+        position: relative;
+        overflow-x: hidden;
+      }
+
+      /* Animated Background */
+      body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(
+            circle at 20% 50%,
+            rgba(102, 126, 234, 0.15) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 80% 80%,
+            rgba(118, 75, 162, 0.15) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 40% 20%,
+            rgba(245, 87, 108, 0.1) 0%,
+            transparent 50%
+          );
+        z-index: -2;
+      }
+
+      /* Floating particles */
+      .particle {
+        position: fixed;
+        pointer-events: none;
+        opacity: 0.5;
+        background: var(--primary-gradient);
+        border-radius: 50%;
+        animation: float 15s infinite ease-in-out;
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0) translateX(0) scale(1);
+        }
+        33% {
+          transform: translateY(-100px) translateX(50px) scale(1.1);
+        }
+        66% {
+          transform: translateY(50px) translateX(-50px) scale(0.9);
+        }
+      }
+
+      /* User Profile Section */
+      .user-profile {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        background: var(--glass-bg);
+        backdrop-filter: blur(10px);
+        padding: 10px 20px;
+        border-radius: 50px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--primary-gradient);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .user-menu {
+        position: absolute;
+        top: 60px;
+        right: 0;
+        background: rgba(26, 26, 46, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 10px;
+        min-width: 200px;
+        display: none;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      }
+
+      .user-menu.active {
+        display: block;
+      }
+
+      .user-menu-item {
+        padding: 10px 15px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        color: var(--text-secondary);
+      }
+
+      .user-menu-item:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: var(--text-primary);
+      }
+
+      /* Header Styling */
+      .main-header {
+        text-align: center;
+        padding: 3rem 0;
+        position: relative;
+      }
+
+      .main-header h1 {
+        font-size: 3.5rem;
+        font-weight: 700;
+        background: var(--primary-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.5rem;
+        animation: slideDown 0.8s ease-out;
+      }
+
+      .main-header p {
+        color: var(--text-secondary);
+        font-size: 1.2rem;
+        animation: fadeIn 1s ease-out 0.3s both;
+      }
+
+      @keyframes slideDown {
+        from {
+          transform: translateY(-50px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      /* AI Assistant Button */
+      .ai-assistant-btn {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        width: 60px;
+        height: 60px;
+        background: var(--ai-gradient);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 5px 20px rgba(0, 210, 255, 0.5);
+        transition: all 0.3s ease;
+        z-index: 999;
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          box-shadow: 0 0 0 0 rgba(0, 210, 255, 0.7);
+        }
+        70% {
+          box-shadow: 0 0 0 20px rgba(0, 210, 255, 0);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(0, 210, 255, 0);
+        }
+      }
+
+      .ai-assistant-btn:hover {
+        transform: scale(1.1);
+      }
+
+      /* AI Panel */
+      .ai-panel {
+        position: fixed;
+        bottom: 100px;
+        right: 30px;
+        width: 350px;
+        max-height: 500px;
+        background: rgba(26, 26, 46, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 20px;
+        display: none;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        z-index: 998;
+      }
+
+      .ai-panel.active {
+        display: block;
+        animation: slideUp 0.3s ease-out;
+      }
+
+      .ai-panel h5 {
+        background: var(--ai-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 15px;
+      }
+
+      .ai-suggestions {
+        max-height: 350px;
+        overflow-y: auto;
+      }
+
+      .ai-suggestion {
+        background: var(--glass-bg);
+        border-radius: 10px;
+        padding: 12px;
+        margin-bottom: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 1px solid transparent;
+      }
+
+      .ai-suggestion:hover {
+        border-color: #00d2ff;
+        transform: translateX(5px);
+      }
+
+      /* Glassmorphism Cards */
+      .glass-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 2rem;
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        transition: all 0.3s ease;
+      }
+
+      .glass-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.5);
+        border-color: rgba(255, 255, 255, 0.2);
+      }
+
+      /* Modern Buttons */
+      .btn-glow {
+        background: var(--primary-gradient);
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px 0 rgba(102, 126, 234, 0.4);
+      }
+
+      .btn-glow:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px 0 rgba(102, 126, 234, 0.6);
+      }
+
+      .btn-ai {
+        background: var(--ai-gradient);
+        box-shadow: 0 4px 15px 0 rgba(0, 210, 255, 0.4);
+      }
+
+      .btn-ai:hover {
+        box-shadow: 0 6px 20px 0 rgba(0, 210, 255, 0.6);
+      }
+
+      /* Quick Actions Bar */
+      .quick-actions {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .quick-action-btn {
+        background: var(--glass-bg);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 12px 24px;
+        border-radius: 50px;
+        color: var(--text-primary);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .quick-action-btn:hover {
+        background: rgba(255, 255, 255, 0.15);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .quick-action-btn i {
+        font-size: 1.1rem;
+      }
+
+      /* Modern Input Fields */
+      .form-control,
+      .form-select {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--text-primary);
+        border-radius: 12px;
+        padding: 12px 16px;
+        transition: all 0.3s ease;
+      }
+
+      .form-control:focus,
+      .form-select:focus {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        color: var(--text-primary);
+      }
+
+      /* Event Cards */
+      .event-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+        margin-bottom: 1.5rem;
+        position: relative;
+        animation: fadeInUp 0.6s ease-out both;
+      }
+
+      .event-card.ai-suggested {
+        border-color: rgba(0, 210, 255, 0.3);
+      }
+
+      .event-card.ai-suggested::after {
+        content: "AI";
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: var(--ai-gradient);
+        color: white;
+        font-size: 0.7rem;
+        padding: 2px 8px;
+        border-radius: 10px;
+        font-weight: 600;
+      }
+
+      .event-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--primary-gradient);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.3s ease;
+      }
+
+      .event-card:hover::before {
+        transform: scaleX(1);
+      }
+
+      .event-card:hover {
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        border-color: rgba(255, 255, 255, 0.2);
+      }
+
+      /* Invitees Section */
+      .invitees-section {
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .invitee-avatar {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: var(--secondary-gradient);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.8rem;
+        margin-right: 5px;
+        cursor: pointer;
+      }
+
+      .add-invitee-btn {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px dashed rgba(255, 255, 255, 0.3);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .add-invitee-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+        border-style: solid;
+      }
+
+      /* Status Badges */
+      .status-badge {
+        font-size: 0.75rem;
+        padding: 6px 14px;
+        border-radius: 50px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        display: inline-block;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .status-badge.upcoming {
+        background: var(--success-gradient);
+        color: white;
+        box-shadow: 0 4px 15px rgba(79, 172, 254, 0.4);
+      }
+
+      .status-badge.maybe {
+        background: var(--warning-gradient);
+        color: white;
+        box-shadow: 0 4px 15px rgba(250, 112, 154, 0.4);
+      }
+
+      .status-badge.declined {
+        background: var(--danger-gradient);
+        color: white;
+        box-shadow: 0 4px 15px rgba(247, 112, 98, 0.4);
+      }
+
+      /* Weather Widget */
+      .weather-widget {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        background: var(--glass-bg);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 15px 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 0.9rem;
+      }
+
+      .weather-icon {
+        font-size: 1.5rem;
+      }
+
+      /* AI Chat Interface */
+      .ai-chat-input {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+      }
+
+      .ai-chat-input input {
+        flex: 1;
+      }
+
+      /* Modal Styling */
+      .modal-content {
+        background: #1a1a2e;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+      }
+
+      /* Tab Navigation */
+      .nav-tabs {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .nav-tabs .nav-link {
+        color: var(--text-secondary);
+        border: none;
+        padding: 10px 20px;
+        transition: all 0.3s ease;
+      }
+
+      .nav-tabs .nav-link:hover {
+        color: var(--text-primary);
+      }
+
+      .nav-tabs .nav-link.active {
+        color: var(--text-primary);
+        background: transparent;
+        border-bottom: 2px solid #667eea;
+      }
+
+      /* Analytics Section */
+      .analytics-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .stat-number {
+        font-size: 2rem;
+        font-weight: 700;
+        background: var(--primary-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      /* Loading Animation */
+      .typing-indicator {
+        display: flex;
+        gap: 4px;
+        padding: 10px;
+      }
+
+      .typing-dot {
+        width: 8px;
+        height: 8px;
+        background: #667eea;
+        border-radius: 50%;
+        animation: typing 1.4s infinite ease-in-out;
+      }
+
+      .typing-dot:nth-child(2) {
+        animation-delay: -0.32s;
+      }
+
+      .typing-dot:nth-child(3) {
+        animation-delay: -0.16s;
+      }
+
+      @keyframes typing {
+        0%,
+        80%,
+        100% {
+          transform: scale(0.8);
+          opacity: 0.5;
+        }
+        40% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      /* Voice Input Button */
+      .voice-input-btn {
+        background: var(--danger-gradient);
+        border: none;
+        color: white;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .voice-input-btn:hover {
+        transform: scale(1.1);
+      }
+
+      .voice-input-btn.recording {
+        animation: pulse 1s infinite;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .main-header h1 {
+          font-size: 2.5rem;
+        }
+
+        .weather-widget {
+          position: relative;
+          top: auto;
+          left: auto;
+          margin-bottom: 20px;
+        }
+
+        .user-profile {
+          position: relative;
+          top: auto;
+          right: auto;
+          margin-bottom: 20px;
+          justify-content: center;
+        }
+
+        .ai-panel {
+          width: calc(100% - 40px);
+          right: 20px;
+          left: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Floating Particles -->
+    <div
+      class="particle"
+      style="width: 40px; height: 40px; top: 10%; left: 5%; animation-delay: 0s"
+    ></div>
+    <div
+      class="particle"
+      style="
+        width: 20px;
+        height: 20px;
+        top: 70%;
+        left: 90%;
+        animation-delay: 2s;
+      "
+    ></div>
+    <div
+      class="particle"
+      style="
+        width: 30px;
+        height: 30px;
+        top: 40%;
+        left: 70%;
+        animation-delay: 4s;
+      "
+    ></div>
+    <div
+      class="particle"
+      style="
+        width: 25px;
+        height: 25px;
+        top: 80%;
+        left: 20%;
+        animation-delay: 6s;
+      "
+    ></div>
+
+    <!-- Weather Widget -->
+    <div class="weather-widget">
+      <i class="fas fa-sun weather-icon" style="color: #fee140"></i>
+      <div>
+        <div>Beirut, 24°C</div>
+        <div class="text-secondary small">Perfect for outdoor events!</div>
+      </div>
+    </div>
+
+    <!-- User Profile -->
+    <div class="user-profile">
+      <span id="userEmail" class="text-secondary">guest@example.com</span>
+      <div class="user-avatar" onclick="toggleUserMenu()">
+        <span id="userInitial">G</span>
+      </div>
+      <div class="user-menu" id="userMenu">
+        <div class="user-menu-item" onclick="showProfile()">
+          <i class="fas fa-user me-2"></i> Profile
+        </div>
+        <div class="user-menu-item" onclick="showAnalytics()">
+          <i class="fas fa-chart-line me-2"></i> Analytics
+        </div>
+        <div class="user-menu-item" onclick="showSettings()">
+          <i class="fas fa-cog me-2"></i> Settings
+        </div>
+        <div class="user-menu-item" onclick="logout()">
+          <i class="fas fa-sign-out-alt me-2"></i> Logout
+        </div>
+      </div>
+    </div>
+
+    <div class="container mt-5">
+      <!-- Header -->
+      <div class="main-header">
+        <h1><i class="fas fa-brain"></i> AI Event Scheduler Pro</h1>
+        <p>Your intelligent planning assistant powered by AI</p>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="quick-actions">
+        <button class="quick-action-btn" onclick="aiSuggestEvents()">
+          <i class="fas fa-magic"></i> AI Suggest Events
+        </button>
+        <button class="quick-action-btn" onclick="optimizeSchedule()">
+          <i class="fas fa-calendar-check"></i> Optimize Schedule
+        </button>
+        <button class="quick-action-btn" onclick="findTimeSlots()">
+          <i class="fas fa-clock"></i> Find Free Time
+        </button>
+        <button class="quick-action-btn" onclick="voiceCommand()">
+          <i class="fas fa-microphone"></i> Voice Command
+        </button>
+        <button class="quick-action-btn" onclick="smartReminders()">
+          <i class="fas fa-bell"></i> Smart Reminders
+        </button>
+      </div>
+
+      <!-- Tabs -->
+      <ul class="nav nav-tabs mb-4" id="mainTabs">
+        <li class="nav-item">
+          <a class="nav-link active" data-bs-toggle="tab" href="#events"
+            >Events</a
+          >
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-bs-toggle="tab" href="#calendar"
+            >Calendar View</a
+          >
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-bs-toggle="tab" href="#analytics"
+            >Analytics</a
+          >
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-bs-toggle="tab" href="#invitations"
+            >Invitations</a
+          >
+        </li>
+      </ul>
+
+      <!-- Tab Content -->
+      <div class="tab-content">
+        <!-- Events Tab -->
+        <div class="tab-pane fade show active" id="events">
+          <!-- Add Event Button -->
+          <div class="text-end mb-4">
+            <button
+              class="btn btn-glow me-2"
+              data-bs-toggle="modal"
+              data-bs-target="#eventModal"
+              onclick="resetForm()"
+            >
+              <i class="fas fa-plus-circle"></i> Add New Event
+            </button>
+            <button class="btn btn-glow btn-ai" onclick="showAISuggestions()">
+              <i class="fas fa-robot"></i> AI Assistant
+            </button>
+          </div>
+
+          <!-- Search/Filter Section -->
+          <div class="search-section glass-card">
+            <h5><i class="fas fa-search"></i> Search & Filter Events</h5>
+            <div class="row g-3">
+              <div class="col-md-3">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="searchTitle"
+                  placeholder="Search by title..."
+                />
+              </div>
+              <div class="col-md-3">
+                <input
+                  type="date"
+                  class="form-control"
+                  id="searchDateFrom"
+                  placeholder="From date"
+                />
+              </div>
+              <div class="col-md-3">
+                <input
+                  type="date"
+                  class="form-control"
+                  id="searchDateTo"
+                  placeholder="To date"
+                />
+              </div>
+              <div class="col-md-2">
+                <select class="form-select" id="searchStatus">
+                  <option value="">All Status</option>
+                  <option value="upcoming">Upcoming</option>
+                  <option value="maybe">Maybe</option>
+                  <option value="declined">Declined</option>
+                </select>
+              </div>
+              <div class="col-md-1">
+                <button class="btn btn-action w-100" onclick="clearFilters()">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Events Container -->
+          <div id="eventsContainer" class="row">
+            <div class="empty-state col-12">
+              <i class="fas fa-calendar-times"></i>
+              <h4>No events scheduled yet</h4>
+              <p>
+                Click "Add New Event" or let AI suggest some events for you!
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Calendar View Tab -->
+        <div class="tab-pane fade" id="calendar">
+          <div class="analytics-card text-center">
+            <i
+              class="fas fa-calendar-alt fa-4x mb-3"
+              style="color: #667eea"
+            ></i>
+            <h4>Calendar View Coming Soon!</h4>
+            <p class="text-secondary">
+              Visual calendar with drag-and-drop functionality
+            </p>
+          </div>
+        </div>
+
+        <!-- Analytics Tab -->
+        <div class="tab-pane fade" id="analytics">
+          <div class="row">
+            <div class="col-md-3">
+              <div class="analytics-card text-center">
+                <i
+                  class="fas fa-calendar-check mb-2"
+                  style="color: #4facfe"
+                ></i>
+                <div class="stat-number" id="totalEvents">0</div>
+                <div class="text-secondary">Total Events</div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="analytics-card text-center">
+                <i class="fas fa-clock mb-2" style="color: #00f2fe"></i>
+                <div class="stat-number" id="upcomingCount">0</div>
+                <div class="text-secondary">Upcoming</div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="analytics-card text-center">
+                <i class="fas fa-users mb-2" style="color: #fa709a"></i>
+                <div class="stat-number" id="inviteesCount">0</div>
+                <div class="text-secondary">Total Invitees</div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="analytics-card text-center">
+                <i class="fas fa-brain mb-2" style="color: #667eea"></i>
+                <div class="stat-number" id="aiSuggestedCount">0</div>
+                <div class="text-secondary">AI Suggested</div>
+              </div>
+            </div>
+          </div>
+          <div class="analytics-card mt-4">
+            <h5><i class="fas fa-chart-line"></i> Event Insights</h5>
+            <p class="text-secondary">
+              Your most productive day is <strong>Wednesday</strong> with 5
+              events on average.
+            </p>
+            <p class="text-secondary">
+              You prefer scheduling meetings in the
+              <strong>morning (9-11 AM)</strong>.
+            </p>
+            <p class="text-secondary">
+              AI suggests blocking <strong>2-3 PM</strong> for focused work
+              time.
+            </p>
+          </div>
+        </div>
+
+        <!-- Invitations Tab -->
+        <div class="tab-pane fade" id="invitations">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="analytics-card">
+                <h5><i class="fas fa-paper-plane"></i> Sent Invitations</h5>
+                <div id="sentInvitations" class="mt-3">
+                  <p class="text-secondary">No invitations sent yet</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="analytics-card">
+                <h5><i class="fas fa-inbox"></i> Received Invitations</h5>
+                <div id="receivedInvitations" class="mt-3">
+                  <p class="text-secondary">No invitations received yet</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI Assistant Button -->
+    <div class="ai-assistant-btn" onclick="toggleAIPanel()">
+      <i class="fas fa-robot"></i>
+    </div>
+
+    <!-- AI Panel -->
+    <div class="ai-panel" id="aiPanel">
+      <h5><i class="fas fa-brain"></i> AI Assistant</h5>
+      <div class="ai-suggestions" id="aiSuggestions">
+        <div class="typing-indicator">
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+        </div>
+      </div>
+      <div class="ai-chat-input">
+        <input
+          type="text"
+          class="form-control"
+          id="aiChatInput"
+          placeholder="Ask me anything..."
+        />
+        <button class="voice-input-btn" onclick="startVoiceInput()">
+          <i class="fas fa-microphone"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Event Modal -->
+    <div class="modal fade" id="eventModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalTitle">Add New Event</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="eventForm">
+              <input type="hidden" id="eventId" />
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="eventTitle" class="form-label">Title *</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="eventTitle"
+                      required
+                    />
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="eventCategory" class="form-label"
+                      >Category</label
+                    >
+                    <select class="form-select" id="eventCategory">
+                      <option value="meeting">Meeting</option>
+                      <option value="personal">Personal</option>
+                      <option value="work">Work</option>
+                      <option value="social">Social</option>
+                      <option value="health">Health</option>
+                      <option value="education">Education</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="eventDateTime" class="form-label"
+                      >Date & Time *</label
+                    >
+                    <input
+                      type="datetime-local"
+                      class="form-control"
+                      id="eventDateTime"
+                      required
+                    />
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="eventDuration" class="form-label"
+                      >Duration</label
+                    >
+                    <select class="form-select" id="eventDuration">
+                      <option value="30">30 minutes</option>
+                      <option value="60" selected>1 hour</option>
+                      <option value="90">1.5 hours</option>
+                      <option value="120">2 hours</option>
+                      <option value="180">3 hours</option>
+                      <option value="240">4 hours</option>
+                      <option value="480">All day</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="eventLocation" class="form-label">Location</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="eventLocation"
+                  placeholder="Enter location or video call link"
+                />
+              </div>
+              <div class="mb-3">
+                <label for="eventDescription" class="form-label"
+                  >Description</label
+                >
+                <textarea
+                  class="form-control"
+                  id="eventDescription"
+                  rows="3"
+                  placeholder="Add a description..."
+                ></textarea>
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="eventStatus" class="form-label">Status</label>
+                    <select class="form-select" id="eventStatus">
+                      <option value="upcoming">Upcoming</option>
+                      <option value="maybe">Maybe</option>
+                      <option value="declined">Declined</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="eventPriority" class="form-label"
+                      >Priority</label
+                    >
+                    <select class="form-select" id="eventPriority">
+                      <option value="low">Low</option>
+                      <option value="medium" selected>Medium</option>
+                      <option value="high">High</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Invitees</label>
+                <div class="input-group">
+                  <input
+                    type="email"
+                    class="form-control"
+                    id="inviteeEmail"
+                    placeholder="Enter email address"
+                  />
+                  <button
+                    class="btn btn-outline-secondary"
+                    type="button"
+                    onclick="addInvitee()"
+                  >
+                    <i class="fas fa-plus"></i> Add
+                  </button>
+                </div>
+                <div id="inviteesList" class="mt-2"></div>
+              </div>
+              <div class="form-check mb-3">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  id="aiOptimize"
+                />
+                <label class="form-check-label" for="aiOptimize">
+                  Let AI optimize time and suggest improvements
+                </label>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-action"
+              data-bs-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              class="btn btn-glow btn-ai me-2"
+              onclick="aiImproveEvent()"
+            >
+              <i class="fas fa-magic"></i> AI Improve
+            </button>
+            <button type="button" class="btn btn-glow" onclick="saveEvent()">
+              <i class="fas fa-save"></i> Save Event
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div
+      class="modal fade"
+      id="loginModal"
+      tabindex="-1"
+      data-bs-backdrop="static"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Welcome to AI Event Scheduler</h5>
+          </div>
+          <div class="modal-body">
+            <form id="loginForm">
+              <div class="mb-3">
+                <label for="loginEmail" class="form-label">Email</label>
+                <input
+                  type="email"
+                  class="form-control"
+                  id="loginEmail"
+                  placeholder="Enter your email"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label for="loginPassword" class="form-label">Password</label>
+                <input
+                  type="password"
+                  class="form-control"
+                  id="loginPassword"
+                  placeholder="Enter your password"
+                  required
+                />
+              </div>
+              <div class="form-check mb-3">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  id="rememberMe"
+                />
+                <label class="form-check-label" for="rememberMe">
+                  Remember me
+                </label>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-action"
+              onclick="continueAsGuest()"
+            >
+              Continue as Guest
+            </button>
+            <button type="button" class="btn btn-glow" onclick="login()">
+              <i class="fas fa-sign-in-alt"></i> Login
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+      // Global variables
+      let events = JSON.parse(localStorage.getItem("events") || "[]");
+      let filteredEvents = [...events];
+      let currentUser = JSON.parse(
+        localStorage.getItem("currentUser") || "null"
+      );
+      let invitees = [];
+      let isRecording = false;
+
+      // AI Responses
+      const aiResponses = {
+        suggestions: [
+          "Based on your schedule, I suggest blocking 2-3 PM daily for focused work.",
+          "You have a gap next Tuesday at 10 AM - perfect for that team meeting!",
+          "Consider scheduling your workout sessions in the morning for better consistency.",
+          "Your meeting with Sarah conflicts with your doctor's appointment. Shall I reschedule?",
+          "It's been 2 weeks since your last team social. Time to plan another one?",
+        ],
+        eventIdeas: [
+          { title: "Weekly Team Standup", category: "meeting", duration: 30 },
+          {
+            title: "Personal Development Time",
+            category: "education",
+            duration: 60,
+          },
+          { title: "Lunch with Mentor", category: "social", duration: 90 },
+          { title: "Quarterly Review Prep", category: "work", duration: 120 },
+          { title: "Yoga Session", category: "health", duration: 60 },
+        ],
+      };
+
+      // Initialize
+      document.addEventListener("DOMContentLoaded", function () {
+        if (!currentUser) {
+          const loginModal = new bootstrap.Modal(
+            document.getElementById("loginModal")
+          );
+          loginModal.show();
+        } else {
+          updateUserDisplay();
+        }
+
+        renderEvents();
+        updateAnalytics();
+
+        // Add event listeners
+        document
+          .getElementById("searchTitle")
+          .addEventListener("input", filterEvents);
+        document
+          .getElementById("searchDateFrom")
+          .addEventListener("change", filterEvents);
+        document
+          .getElementById("searchDateTo")
+          .addEventListener("change", filterEvents);
+        document
+          .getElementById("searchStatus")
+          .addEventListener("change", filterEvents);
+
+        // AI Chat
+        document
+          .getElementById("aiChatInput")
+          .addEventListener("keypress", function (e) {
+            if (e.key === "Enter") {
+              handleAIChat();
+            }
+          });
+      });
+
+      // User Management
+      function login() {
+        const email = document.getElementById("loginEmail").value;
+        const password = document.getElementById("loginPassword").value;
+
+        if (email && password) {
+          currentUser = {
+            email: email,
+            name: email.split("@")[0],
+            id: generateId(),
+          };
+          localStorage.setItem("currentUser", JSON.stringify(currentUser));
+          updateUserDisplay();
+          bootstrap.Modal.getInstance(
+            document.getElementById("loginModal")
+          ).hide();
+        }
+      }
+
+      function continueAsGuest() {
+        currentUser = {
+          email: "guest@example.com",
+          name: "Guest",
+          id: "guest",
+        };
+        updateUserDisplay();
+        bootstrap.Modal.getInstance(
+          document.getElementById("loginModal")
+        ).hide();
+      }
+
+      function logout() {
+        localStorage.removeItem("currentUser");
+        location.reload();
+      }
+
+      function updateUserDisplay() {
+        if (currentUser) {
+          document.getElementById("userEmail").textContent = currentUser.email;
+          document.getElementById("userInitial").textContent =
+            currentUser.name[0].toUpperCase();
+        }
+      }
+
+      function toggleUserMenu() {
+        document.getElementById("userMenu").classList.toggle("active");
+      }
+
+      // Generate unique ID
+      function generateId() {
+        return Date.now().toString(36) + Math.random().toString(36).substr(2);
+      }
+
+      // Format date for display
+      function formatDate(dateString) {
+        const date = new Date(dateString);
+        const now = new Date();
+        const diffTime = date - now;
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+        let relativeTime = "";
+        if (diffDays === 0) {
+          relativeTime = " (Today)";
+        } else if (diffDays === 1) {
+          relativeTime = " (Tomorrow)";
+        } else if (diffDays > 0 && diffDays <= 7) {
+          relativeTime = ` (In ${diffDays} days)`;
+        } else if (diffDays < 0) {
+          relativeTime = " (Past event)";
+        }
+
+        return (
+          date.toLocaleString("en-US", {
+            weekday: "short",
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          }) + relativeTime
+        );
+      }
+
+      // Reset form
+      function resetForm() {
+        document.getElementById("eventForm").reset();
+        document.getElementById("eventId").value = "";
+        document.getElementById("modalTitle").textContent = "Add New Event";
+        invitees = [];
+        updateInviteesList();
+      }
+
+      // Add invitee
+      function addInvitee() {
+        const email = document.getElementById("inviteeEmail").value;
+        if (email && !invitees.includes(email)) {
+          invitees.push(email);
+          updateInviteesList();
+          document.getElementById("inviteeEmail").value = "";
+        }
+      }
+
+      function updateInviteesList() {
+        const list = document.getElementById("inviteesList");
+        list.innerHTML = invitees
+          .map(
+            (email) => `
+                <span class="badge bg-secondary me-2 mb-2">
+                    ${email}
+                    <i class="fas fa-times ms-1" style="cursor: pointer;" onclick="removeInvitee('${email}')"></i>
+                </span>
+            `
+          )
+          .join("");
+      }
+
+      function removeInvitee(email) {
+        invitees = invitees.filter((e) => e !== email);
+        updateInviteesList();
+      }
+
+      // Save event
+      function saveEvent() {
+        const id = document.getElementById("eventId").value;
+        const event = {
+          id: id || generateId(),
+          title: document.getElementById("eventTitle").value,
+          dateTime: document.getElementById("eventDateTime").value,
+          location: document.getElementById("eventLocation").value,
+          description: document.getElementById("eventDescription").value,
+          status: document.getElementById("eventStatus").value,
+          category: document.getElementById("eventCategory").value,
+          duration: document.getElementById("eventDuration").value,
+          priority: document.getElementById("eventPriority").value,
+          invitees: [...invitees],
+          createdBy: currentUser ? currentUser.email : "guest",
+          aiSuggested: document.getElementById("aiOptimize").checked,
+          createdAt: new Date().toISOString(),
+        };
+
+        if (!event.title || !event.dateTime) {
+          alert("Please fill in all required fields");
+          return;
+        }
+
+        if (id) {
+          const index = events.findIndex((e) => e.id === id);
+          events[index] = event;
+        } else {
+          events.push(event);
+
+          // Send notifications to invitees
+          if (invitees.length > 0) {
+            showNotification(`Invitations sent to ${invitees.length} people!`);
+          }
+        }
+
+        localStorage.setItem("events", JSON.stringify(events));
+        bootstrap.Modal.getInstance(
+          document.getElementById("eventModal")
+        ).hide();
+        filterEvents();
+        updateAnalytics();
+      }
+
+      // Edit event
+      function editEvent(id) {
+        const event = events.find((e) => e.id === id);
+        if (event) {
+          document.getElementById("eventId").value = event.id;
+          document.getElementById("eventTitle").value = event.title;
+          document.getElementById("eventDateTime").value = event.dateTime;
+          document.getElementById("eventLocation").value = event.location || "";
+          document.getElementById("eventDescription").value =
+            event.description || "";
+          document.getElementById("eventStatus").value = event.status;
+          document.getElementById("eventCategory").value =
+            event.category || "meeting";
+          document.getElementById("eventDuration").value =
+            event.duration || "60";
+          document.getElementById("eventPriority").value =
+            event.priority || "medium";
+          invitees = event.invitees || [];
+          updateInviteesList();
+          document.getElementById("modalTitle").textContent = "Edit Event";
+
+          const modal = new bootstrap.Modal(
+            document.getElementById("eventModal")
+          );
+          modal.show();
+        }
+      }
+
+      // Delete event
+      function deleteEvent(id) {
+        if (confirm("Are you sure you want to delete this event?")) {
+          events = events.filter((e) => e.id !== id);
+          localStorage.setItem("events", JSON.stringify(events));
+          filterEvents();
+          updateAnalytics();
+        }
+      }
+
+      // Filter events
+      function filterEvents() {
+        const titleSearch = document
+          .getElementById("searchTitle")
+          .value.toLowerCase();
+        const dateFrom = document.getElementById("searchDateFrom").value;
+        const dateTo = document.getElementById("searchDateTo").value;
+        const statusFilter = document.getElementById("searchStatus").value;
+
+        filteredEvents = events.filter((event) => {
+          if (titleSearch && !event.title.toLowerCase().includes(titleSearch)) {
+            return false;
+          }
+
+          const eventDate = new Date(event.dateTime);
+          if (dateFrom && eventDate < new Date(dateFrom)) {
+            return false;
+          }
+          if (dateTo && eventDate > new Date(dateTo + "T23:59:59")) {
+            return false;
+          }
+
+          if (statusFilter && event.status !== statusFilter) {
+            return false;
+          }
+
+          return true;
+        });
+
+        renderEvents();
+      }
+
+      // Clear filters
+      function clearFilters() {
+        document.getElementById("searchTitle").value = "";
+        document.getElementById("searchDateFrom").value = "";
+        document.getElementById("searchDateTo").value = "";
+        document.getElementById("searchStatus").value = "";
+        filterEvents();
+      }
+
+      // Render events
+      function renderEvents() {
+        const container = document.getElementById("eventsContainer");
+
+        if (filteredEvents.length === 0) {
+          container.innerHTML = `
+                    <div class="empty-state col-12">
+                        <i class="fas fa-calendar-times"></i>
+                        <h4>${
+                          events.length === 0
+                            ? "No events scheduled yet"
+                            : "No events match your search"
+                        }</h4>
+                        <p>${
+                          events.length === 0
+                            ? 'Click "Add New Event" or let AI suggest some events for you!'
+                            : "Try adjusting your filters"
+                        }</p>
+                    </div>
+                `;
+          return;
+        }
+
+        filteredEvents.sort(
+          (a, b) => new Date(a.dateTime) - new Date(b.dateTime)
+        );
+
+        container.innerHTML = filteredEvents
+          .map(
+            (event, index) => `
+                <div class="col-lg-4 col-md-6" style="animation-delay: ${
+                  index * 0.1
+                }s">
+                    <div class="card event-card ${
+                      event.aiSuggested ? "ai-suggested" : ""
+                    }">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <h5 class="card-title mb-0">${event.title}</h5>
+                                <span class="status-badge ${event.status}">${
+              event.status
+            }</span>
+                            </div>
+                            <p class="text-secondary small mb-2">
+                                <i class="far fa-clock me-2"></i>${formatDate(
+                                  event.dateTime
+                                )}
+                            </p>
+                            <p class="text-secondary small mb-2">
+                                <i class="fas fa-tag me-2"></i>${
+                                  event.category || "General"
+                                } • ${event.duration || 60} min
+                            </p>
+                            ${
+                              event.location
+                                ? `<p class="text-secondary small mb-2"><i class="fas fa-map-marker-alt me-2"></i>${event.location}</p>`
+                                : ""
+                            }
+                            ${
+                              event.description
+                                ? `<p class="card-text text-secondary">${event.description}</p>`
+                                : ""
+                            }
+                            
+                            ${
+                              event.invitees && event.invitees.length > 0
+                                ? `
+                                <div class="invitees-section">
+                                    <small class="text-secondary">Invitees:</small>
+                                    <div class="mt-1">
+                                        ${event.invitees
+                                          .slice(0, 3)
+                                          .map(
+                                            (email) => `
+                                            <span class="invitee-avatar" title="${email}">
+                                                ${email[0].toUpperCase()}
+                                            </span>
+                                        `
+                                          )
+                                          .join("")}
+                                        ${
+                                          event.invitees.length > 3
+                                            ? `
+                                            <span class="invitee-avatar" title="${
+                                              event.invitees.length - 3
+                                            } more">
+                                                +${event.invitees.length - 3}
+                                            </span>
+                                        `
+                                            : ""
+                                        }
+                                    </div>
+                                </div>
+                            `
+                                : ""
+                            }
+                            
+                            <div class="mt-3 d-flex">
+                                <button class="btn btn-action edit" onclick="editEvent('${
+                                  event.id
+                                }')">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button class="btn btn-action delete" onclick="deleteEvent('${
+                                  event.id
+                                }')">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+          )
+          .join("");
+      }
+
+      // AI Functions
+      function toggleAIPanel() {
+        const panel = document.getElementById("aiPanel");
+        panel.classList.toggle("active");
+        if (panel.classList.contains("active")) {
+          showAISuggestions();
+        }
+      }
+
+      function showAISuggestions() {
+        const suggestionsDiv = document.getElementById("aiSuggestions");
+        suggestionsDiv.innerHTML =
+          '<div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>';
+
+        setTimeout(() => {
+          const suggestions =
+            aiResponses.suggestions[
+              Math.floor(Math.random() * aiResponses.suggestions.length)
+            ];
+          suggestionsDiv.innerHTML = `
+                    <div class="ai-suggestion">
+                        <i class="fas fa-lightbulb me-2" style="color: #fee140;"></i>
+                        ${suggestions}
+                    </div>
+                    <div class="ai-suggestion mt-2" onclick="aiSuggestEvents()">
+                        <i class="fas fa-plus-circle me-2" style="color: #4facfe;"></i>
+                        Let me suggest some events for you
+                    </div>
+                `;
+        }, 1500);
+      }
+
+      function aiSuggestEvents() {
+        const idea =
+          aiResponses.eventIdeas[
+            Math.floor(Math.random() * aiResponses.eventIdeas.length)
+          ];
+
+        // Pre-fill the form with AI suggestion
+        resetForm();
+        document.getElementById("eventTitle").value = idea.title;
+        document.getElementById("eventCategory").value = idea.category;
+        document.getElementById("eventDuration").value = idea.duration;
+        document.getElementById("aiOptimize").checked = true;
+
+        // Set a smart date/time
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        tomorrow.setHours(10, 0, 0, 0);
+        document.getElementById("eventDateTime").value = tomorrow
+          .toISOString()
+          .slice(0, 16);
+
+        const modal = new bootstrap.Modal(
+          document.getElementById("eventModal")
+        );
+        modal.show();
+
+        showNotification("AI has suggested an event for you!");
+      }
+
+      function aiImproveEvent() {
+        const title = document.getElementById("eventTitle").value;
+        if (title) {
+          // Simulate AI improvements
+          document.getElementById(
+            "eventDescription"
+          ).value = `AI Enhanced: ${title} - This event has been optimized for maximum productivity and engagement.`;
+          document.getElementById("aiOptimize").checked = true;
+          showNotification("AI has improved your event!");
+        }
+      }
+
+      function optimizeSchedule() {
+        showNotification("AI is analyzing your schedule for optimization...");
+        setTimeout(() => {
+          showNotification(
+            "Your schedule has been optimized! 3 conflicts resolved."
+          );
+        }, 2000);
+      }
+
+      function findTimeSlots() {
+        showNotification("Finding available time slots...");
+        setTimeout(() => {
+          showNotification(
+            "Found 5 free slots this week. Check AI Assistant for details."
+          );
+          toggleAIPanel();
+        }, 1500);
+      }
+
+      function voiceCommand() {
+        if (!isRecording) {
+          startVoiceInput();
+        }
+      }
+
+      function startVoiceInput() {
+        const btn = event.target.closest(".voice-input-btn");
+        if (btn) {
+          btn.classList.toggle("recording");
+        }
+
+        if (
+          "webkitSpeechRecognition" in window ||
+          "SpeechRecognition" in window
+        ) {
+          showNotification("Listening... Say your command");
+          // Simulate voice recognition
+          setTimeout(() => {
+            if (btn) btn.classList.remove("recording");
+            showNotification(
+              'Voice command: "Schedule meeting with team tomorrow at 2 PM"'
+            );
+            // Auto-fill form
+            resetForm();
+            document.getElementById("eventTitle").value = "Team Meeting";
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            tomorrow.setHours(14, 0, 0, 0);
+            document.getElementById("eventDateTime").value = tomorrow
+              .toISOString()
+              .slice(0, 16);
+            const modal = new bootstrap.Modal(
+              document.getElementById("eventModal")
+            );
+            modal.show();
+          }, 3000);
+        } else {
+          showNotification("Voice recognition not supported in your browser");
+        }
+      }
+
+      function smartReminders() {
+        showNotification(
+          "Smart reminders activated! You'll receive AI-powered notifications."
+        );
+      }
+
+      function handleAIChat() {
+        const input = document.getElementById("aiChatInput");
+        const message = input.value.trim();
+
+        if (message) {
+          const suggestionsDiv = document.getElementById("aiSuggestions");
+          suggestionsDiv.innerHTML = `
+                    <div class="ai-suggestion mb-2">
+                        <strong>You:</strong> ${message}
+                    </div>
+                    <div class="typing-indicator">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                `;
+
+          input.value = "";
+
+          setTimeout(() => {
+            let response = "I understand. Let me help you with that.";
+
+            if (message.toLowerCase().includes("meeting")) {
+              response =
+                "I can help you schedule a meeting. What date and time works best?";
+            } else if (message.toLowerCase().includes("free")) {
+              response =
+                "You have free time on Tuesday at 2 PM and Thursday at 10 AM.";
+            } else if (message.toLowerCase().includes("busy")) {
+              response =
+                "Your busiest day is Wednesday with 5 events. Consider rescheduling some.";
+            }
+
+            suggestionsDiv.innerHTML = `
+                        <div class="ai-suggestion mb-2">
+                            <strong>You:</strong> ${message}
+                        </div>
+                        <div class="ai-suggestion">
+                            <strong>AI:</strong> ${response}
+                        </div>
+                    `;
+          }, 1500);
+        }
+      }
+
+      // Analytics
+      function updateAnalytics() {
+        document.getElementById("totalEvents").textContent = events.length;
+        document.getElementById("upcomingCount").textContent = events.filter(
+          (e) => e.status === "upcoming"
+        ).length;
+        document.getElementById("inviteesCount").textContent = events.reduce(
+          (total, event) => total + (event.invitees?.length || 0),
+          0
+        );
+        document.getElementById("aiSuggestedCount").textContent = events.filter(
+          (e) => e.aiSuggested
+        ).length;
+      }
+
+      function showAnalytics() {
+        document.querySelector('[href="#analytics"]').click();
+      }
+
+      function showProfile() {
+        showNotification("Profile settings coming soon!");
+      }
+
+      function showSettings() {
+        showNotification("Settings panel coming soon!");
+      }
+
+      // Notifications
+      function showNotification(message) {
+        const notification = document.createElement("div");
+        notification.className = "notification";
+        notification.innerHTML = `<i class="fas fa-info-circle me-2"></i>${message}`;
+        notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: var(--primary-gradient);
+                color: white;
+                padding: 15px 30px;
+                border-radius: 50px;
+                box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+                z-index: 9999;
+                animation: slideDown 0.3s ease-out;
+            `;
+
+        document.body.appendChild(notification);
+
+        setTimeout(() => {
+          notification.style.animation = "fadeOut 0.3s ease-out";
+          setTimeout(() => notification.remove(), 300);
+        }, 3000);
+      }
+
+      // Close dropdowns when clicking outside
+      document.addEventListener("click", function (e) {
+        if (!e.target.closest(".user-profile")) {
+          document.getElementById("userMenu").classList.remove("active");
+        }
+      });
+
+      // Keyboard shortcuts
+      document.addEventListener("keydown", function (e) {
+        // Ctrl/Cmd + N for new event
+        if ((e.ctrlKey || e.metaKey) && e.key === "n") {
+          e.preventDefault();
+          resetForm();
+          const modal = new bootstrap.Modal(
+            document.getElementById("eventModal")
+          );
+          modal.show();
+        }
+
+        // Ctrl/Cmd + / for AI assistant
+        if ((e.ctrlKey || e.metaKey) && e.key === "/") {
+          e.preventDefault();
+          toggleAIPanel();
+        }
+      });
+
+      // Add fade out animation
+      const style = document.createElement("style");
+      style.textContent = `
+            @keyframes fadeOut {
+                from { opacity: 1; transform: translateX(-50%); }
+                to { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+            }
+        `;
+      document.head.appendChild(style);
+    </script>
+  </body>
+</html>
